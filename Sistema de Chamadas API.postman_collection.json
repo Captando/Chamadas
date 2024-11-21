@@ -1,0 +1,178 @@
+{
+	"info": {
+		"_postman_id": "46615970-5784-4e08-b9bc-f224873a8d3d",
+		"name": "Sistema de Chamadas API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34645258"
+	},
+	"item": [
+		{
+			"name": "Registrar Presença",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"student_name\": \"João Silva\",\n  \"student_email\": \"joao.silva@email.com\",\n  \"student_phone\": \"123456789\",\n  \"class_id\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/registrar-presenca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"registrar-presenca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Presenças",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/presencas?email=joao.silva@email.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"presencas"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "joao.silva@email.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastrar Aula",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1,\n  \"title\": \"Aula de Matemática\",\n  \"date\": \"2024-11-21\",\n  \"time\": \"10:00\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/aulas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"aulas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar Aulas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/aulas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"aulas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deletar Aula",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/aulas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"aulas",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gerar CSV de Aula",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/alunos/csv/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alunos",
+						"csv",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gerar CSV Geral",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/alunos/csv",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"alunos",
+						"csv"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
