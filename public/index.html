@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sua_empresa - Registro de Presença</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="https://storage.googleapis.com/ecdt-logo-saida/d286ac19f1a86023cae32a7d10045b094f25b1e52b1de5abef910e5806894f90/sua_empresa.webp" type="image/webp">
+    <style>
+        :root {
+            --primary-color: #e7a52b;
+            --secondary-color: #2c3e50;
+            --tertiary-color: #3498db;
+            --background-light: #f4f6f7;
+            --background-dark: #1a2236;
+            --text-light: #333;
+            --text-dark: #ecf0f1;
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            transition: all var(--transition-speed) ease;
+        }
+
+        body.dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: fadeIn 1s ease;
+        }
+
+        .logo {
+            max-width: 200px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-control {
+            border-radius: var(--border-radius);
+            padding: 10px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(231, 165, 43, 0.25);
+        }
+
+        .btn {
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: var(--primary-color);
+            font-size: 24px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: var(--secondary-color);
+            transform: scale(1.2) rotate(360deg);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+        }
+
+        #notifications {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1050;
+        }
+
+        .notification {
+            max-width: 300px;
+            margin-bottom: 10px;
+        }
+
+        .star-rating {
+            font-size: 24px;
+            color: #ffd700;
+        }
+
+        .star-rating .fa-star {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star-rating .fa-star:hover,
+        .star-rating .fa-star.active {
+            color: #ffaa00;
+        }
+
+        .attendance-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .attendance-item:last-child {
+            border-bottom: none;
+        }
+
+        body.dark-mode .container,
+        body.dark-mode .modal-content {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        body.dark-mode .form-control {
+            background-color: #2c3e50;
+            color: var(--text-dark);
+            border-color: #34495e;
+        }
+
+        body.dark-mode .btn-secondary {
+            background-color: #34495e;
+            border-color: #2c3e50;
+        }
+
+        body.dark-mode .modal-header,
+        body.dark-mode .modal-footer {
+            border-color: #34495e;
+        }
+
+        #ratingAlert {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            max-width: 200px;
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="notifications"></div>
+
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-sun" id="themeIcon"></i>
+    </div>
+
+    <div class="container">
+        <div class="text-center mb-4">
+            <img src="https://sua_empresa.com.br/wp-content/uploads/2023/06/Logo.png" alt="sua_empresa Logo" class="img-fluid logo" id="logo">
+        </div>
+
+        <h2 class="text-center mb-4">Registro de Presença</h2>
+
+        <form id="attendanceForm">
+            <div class="form-group">
+                <input type="text" class="form-control" id="fullName" placeholder="Nome Completo" required>
+            </div>
+
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" placeholder="E-mail" required>
+            </div>
+
+            <div class="form-group">
+                <input type="tel" class="form-control" id="phone" placeholder="Telefone (ex: 11987654321)" required>
+            </div>
+
+            <div class="form-group">
+                <input type="text" class="form-control" id="classDay" placeholder="Aula do Dia" readonly>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-check-circle"></i> Registrar Presença
+                </button>
+                <button type="button" class="btn btn-secondary" id="listAttendanceBtn">
+                    <i class="fas fa-list"></i> Listar Presenças
+                </button>
+                <button type="button" class="btn btn-warning" id="evaluateBtn">
+                    <i class="fas fa-star"></i> Avaliar
+                </button>
+            </div>
+        </form>
+
+        <div class="social-links mt-4">
+            <a href="https://www.instagram.com/sua_empresa/"  title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.youtube.com/@sua_empresa"  title="YouTube">
+                <i class="fab fa-youtube"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="modal fade" id="attendanceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Presenças Registradas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="attendanceList">
+                    <p>Nenhuma presença registrada ainda.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="evaluationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Avaliação da Aula</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="star-rating mb-3">
+                        <i class="far fa-star" data-rating="1"></i>
+                        <i class="far fa-star" data-rating="2"></i>
+                        <i class="far fa-star" data-rating="3"></i>
+                        <i class="far fa-star" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="evaluationComment" rows="3" placeholder="Comentários"></textarea>
+                    </div>
+                    <div id="ratingAlert" class="alert alert-warning d-none" role="alert">
+                        Por favor, selecione uma classificação.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="submitEvaluation">Enviar Avaliação</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-4 py-3 bg-light">
+        <div class="container">
+            <p class="mb-2">Desenvolvido por sua_empresa</p>
+            <div class="small text-muted">
+                <a href="https://sua_empresa.com.br/politica-de-privacidade" >Política de Privacidade</a> | 
+                <a href="https://sua_empresa.com.br/termos-de-uso" >Termos de Uso</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@0.3.12/dist/web.js'
+
+        Typebot.initBubble({
+            typebot: "assistente-chamadas",
+            apiHost: "https://hooks.sua_empresa.com.br",
+            previewMessage: {
+                message: "Posso ajudar?",
+                autoShowDelay: 10000,
+                avatarUrl: "https://storage.googleapis.com/ecdt-logo-saida/d286ac19f1a86023cae32a7d10045b094f25b1e52b1de5abef910e5806894f90/sua_empresa.webp",
+            },
+            theme: {
+                button: { backgroundColor: "#303235" },
+                chatWindow: { backgroundColor: "#fff" },
+            },
+        });
+
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const notificationsContainer = document.getElementById('notifications');
+        const evaluateBtn = document.getElementById('evaluateBtn');
+        const evaluationModal = new bootstrap.Modal(document.getElementById('evaluationModal'));
+        const submitEvaluationBtn = document.getElementById('submitEvaluation');
+        const listAttendanceBtn = document.getElementById('listAttendanceBtn');
+        const attendanceModal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+        const logo = document.getElementById('logo');
+        const ratingAlert = document.getElementById('ratingAlert');
+        let currentRating = 0;
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-moon';
+                logo.src = 'https://sua_empresa.com.br/wp-content/webp-express/webp-images/uploads/2023/06/Logo-Branca-1024x318.png.webp';
+            } else {
+                themeIcon.className = 'fas fa-sun';
+                logo.src = 'https://sua_empresa.com.br/wp-content/uploads/2023/06/Logo.png';
+            }
+        });
+
+        function fetchClassDay() {
+            fetch('https://chamada.sua_empresa.com.br/api/aulas/hoje', {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Aula do dia:', data);
+                const classDay = document.getElementById('classDay');
+                if (data && data.length > 0) {
+                    const aula = data[0];
+                    classDay.value = `${aula.title}`;
+                    classDay.setAttribute('data-class-id', aula.id);
+                    evaluateBtn.disabled = false;
+                } else {
+                    classDay.value = 'Não há aula hoje';
+                    classDay.removeAttribute('data-class-id');
+                    evaluateBtn.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching class day:', error);
+                document.getElementById('classDay').value = 'Erro ao carregar a aula do dia';
+                evaluateBtn.disabled = true;
+            });
+        }
+
+        function validatePhoneNumber(phone) {
+            const regex = /^[1-9]{2}[9]?[0-9]{8}$/;
+            return regex.test(phone);
+        }
+
+        document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const classDay = document.getElementById('classDay');
+            const classId = classDay.getAttribute('data-class-id');
+
+            if (!fullName || !email || !phone || !classId) {
+                showNotification('Por favor, preencha todos os campos e certifique-se de que há uma aula hoje.', 'danger');
+                return;
+            }
+
+            if (!validatePhoneNumber(phone)) {
+                showNotification('Número de telefone inválido. Use o formato: 11987654321', 'danger');
+                return;
+            }
+
+            fetch('https://chamada.sua_empresa.com.br/api/registrar-presenca', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    student_name: fullName,
+                    student_email: email,
+                    student_phone: phone,
+                    class_id: parseInt(classId)
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showNotification(data.error, 'warning');
+                } else {
+                    showNotification(`Presença registrada com sucesso para ${fullName}!`, 'success');
+                    this.reset();
+                    fetchClassDay();
+                }
+            })
+            .catch(error => {
+                console.error('Error registering attendance:', error);
+                showNotification('Erro ao registrar presença. Tente novamente.', 'danger');
+            });
+        });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show notification`;
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            notificationsContainer.innerHTML = '';
+            notificationsContainer.appendChild(notification);
+        }
+
+        listAttendanceBtn.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showNotification('Por favor, insira seu e-mail para listar as presenças.', 'warning');
+                return;
+            }
+
+            fetch(`https://chamada.sua_empresa.com.br/api/presencas?email=${encodeURIComponent(email)}`)
+            .then(response => response.json())
+            .then(data => {
+                const attendanceList = document.getElementById('attendanceList');
+                attendanceList.innerHTML = '';
+                if (data && data.length > 0) {
+                    attendanceList.innerHTML = `<p>Total de presenças: ${data.length}</p>`;
+                    data.forEach(attendance => {
+                        const attendanceItem = document.createElement('div');
+                        attendanceItem.className = 'attendance-item';
+                        attendanceItem.innerHTML = `Aula ${attendance.class_id}`;
+                        attendanceList.appendChild(attendanceItem);
+                    });
+                } else {
+                    attendanceList.innerHTML = '<p>Nenhuma presença registrada.</p>';
+                }
+                attendanceModal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching attendances:', error);
+                showNotification('Erro ao listar presenças. Tente novamente.', 'danger');
+            });
+        });
+
+        evaluateBtn.addEventListener('click', () => {
+            const classDay = document.getElementById('classDay');
+            if (!classDay.getAttribute('data-class-id')) {
+                showNotification('Não é possível avaliar hoje. Não há aula programada.', 'warning');
+            } else {
+                currentRating = 0;
+                updateStarRating(0);
+                document.getElementById('evaluationComment').value = '';
+                ratingAlert.classList.add('d-none');
+                evaluationModal.show();
+            }
+        });
+
+        document.querySelector('.star-rating').addEventListener('click', function(e) {
+            if (e.target.classList.contains('fa-star')) {
+                const rating = parseInt(e.target.getAttribute('data-rating'));
+                updateStarRating(rating);
+                ratingAlert.classList.add('d-none');
+            }
+        });
+
+        function updateStarRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star-rating .fa-star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas', 'active');
+                } else {
+                    star.classList.remove('fas', 'active');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        submitEvaluationBtn.addEventListener('click', () => {
+            const classDay = document.getElementById('classDay');
+            const classId = classDay.getAttribute('data-class-id');
+            const comment = document.getElementById('evaluationComment').value;
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!currentRating) {
+                ratingAlert.classList.remove('d-none');
+                return;
+            }
+
+            if (!classId || !fullName || !email || !phone) {
+                showNotification('Por favor, preencha todos os campos antes de enviar a avaliação.', 'warning');
+                return;
+            }
+
+            fetch('https://n8n.sua_empresa.com.br/webhook/avalidando-sua_empresa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    class_id: parseInt(classId),
+                    rating: currentRating,
+                    comment: comment,
+                    student_name: fullName,
+                    student_email: email,
+                    student_phone: phone,
+                    class_title: classDay.value
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                showNotification('Avaliação enviada com sucesso!', 'success');
+                evaluationModal.hide();
+                currentRating = 0;
+                document.getElementById('evaluationComment').value = '';
+                updateStarRating(0);
+            })
+            .catch(error => {
+                console.error('Error submitting evaluation:', error);
+                showNotification('Erro ao enviar avaliação. Tente novamente.', 'danger');
+            });
+        });
+
+        window.onload = fetchClassDay;
+    </script>
+</body>
+</html>

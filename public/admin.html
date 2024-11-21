@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sua_empresa - Painel Administrativo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="icon" href="https://storage.googleapis.com/ecdt-logo-saida/d286ac19f1a86023cae32a7d10045b094f25b1e52b1de5abef910e5806894f90/sua_empresa.webp" type="image/webp">
+    <style>
+        :root {
+            --primary-color: #001648;
+            --secondary-color: #faa902;
+            --background-light: #f4f6f7;
+            --text-light: #ffffff;
+            --text-dark: #001648;
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .sidebar {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            padding-top: 20px;
+            transition: all var(--transition-speed);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-link {
+            color: var(--text-light);
+            transition: all var(--transition-speed);
+            border-radius: 5px;
+            margin: 5px 10px;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all var(--transition-speed);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-speed);
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--text-dark);
+            transition: all var(--transition-speed);
+        }
+
+        .btn-primary:hover {
+            background-color: #e09802;
+            border-color: #e09802;
+            color: var(--text-dark);
+            transform: scale(1.05);
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        #loginContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--primary-color);
+        }
+
+        #loginForm {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-speed);
+        }
+
+        #loginForm:hover {
+            transform: scale(1.02);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            transition: all var(--transition-speed);
+        }
+
+        .comment {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            transition: all var(--transition-speed);
+        }
+
+        .comment:hover {
+            background-color: rgba(250, 169, 2, 0.1);
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .star-rating {
+            color: #faa902;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transition: all var(--transition-speed);
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        [data-bs-theme="dark"] {
+            --background-light: #1a1a1a;
+            --text-dark: #ffffff;
+        }
+
+        [data-bs-theme="dark"] .card,
+        [data-bs-theme="dark"] .table {
+            background-color: #2c2c2c;
+            color: var(--text-light);
+        }
+
+        [data-bs-theme="dark"] .table th {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .animate__animated {
+            animation-duration: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <button class="btn btn-secondary dark-mode-toggle animate__animated animate__fadeIn" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div id="loginContainer" class="animate__animated animate__fadeIn">
+        <form id="loginForm" class="animate__animated animate__zoomIn">
+            <img src="https://sua_empresa.com.br/wp-content/uploads/2023/06/Logo.png" alt="sua_empresa Logo" class="img-fluid mb-4">
+            <h2 class="text-center mb-4">Login sua_empresa</h2>
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuário</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+    </div>
+
+    <div id="adminPanel" style="display: none;">
+        <div class="sidebar animate__animated animate__slideInLeft">
+            <img src="https://sua_empresa.com.br/wp-content/uploads/2023/06/Logo-Branca-1024x318.png" alt="sua_empresa Logo" class="img-fluid mb-4 px-4">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#classes">
+                        <i class="fas fa-chalkboard"></i> Aulas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#students">
+                        <i class="fas fa-user-graduate"></i> Alunos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#comments">
+                        <i class="fas fa-comments"></i> Comentários
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h1 class="mb-4 animate__animated animate__fadeIn">Painel Administrativo</h1>
+            
+            <div id="dashboard" class="animate__animated animate__fadeIn">
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card animate__animated animate__zoomIn">
+                            <div class="card-body">
+                                <h5 class="card-title">Total de Aulas</h5>
+                                <p class="card-text" id="totalClasses">Carregando...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card animate__animated animate__zoomIn">
+                            <div class="card-body">
+                                <h5 class="card-title">Total de Alunos</h5>
+                                <p class="card-text" id="totalStudents">Carregando...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card animate__animated animate__zoomIn">
+                            <div class="card-body">
+                                <h5 class="card-title">Aula de Hoje</h5>
+                                <p class="card-text" id="todayClass">Carregando...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card animate__animated animate__zoomIn">
+                            <div class="card-body">
+                                <h5 class="card-title">Alunos Mais Assíduos</h5>
+                                <button class="btn btn-primary" onclick="showTopStudents()">Ver Lista</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <button class="btn btn-primary animate__animated animate__fadeIn" onclick="exportAllAttendance()">
+                            <i class="fas fa-file-export"></i> Exportar Todas as Presenças (CSV)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="classes" style="display: none;" class="animate__animated animate__fadeIn">
+                <h2>Gerenciar Aulas</h2>
+                <button class="btn btn-primary mb-3 animate__animated animate__fadeIn" onclick="showAddClassModal()">
+                    <i class="fas fa-plus"></i> Adicionar Aula
+                </button>
+                <table class="table table-striped animate__animated animate__fadeIn">
+                    <thead>
+                        <tr>
+                            <th>Número da Aula</th>
+                            <th>Título</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classesTableBody">
+                        <!-- Classes will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="students" style="display: none;" class="animate__animated animate__fadeIn">
+                <h2>Alunos</h2>
+                <button class="btn btn-primary mb-3 animate__animated animate__fadeIn" onclick="exportAllStudents()">
+                    <i class="fas fa-file-export"></i> Exportar Todos os Alunos (CSV)
+                </button>
+            </div>
+
+            <div id="comments" style="display: none;" class="animate__animated animate__fadeIn">
+                <h2>Comentários</h2>
+                <div id="commentsContent"></div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Class Modal -->
+        <div class="modal fade" id="classModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="classModalTitle">Adicionar Aula</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="classForm">
+                            <div class="mb-3">
+                                <label for="classId" class="form-label">Número da Aula</label>
+                                <input type="number" class="form-control" id="classId" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="classTitle" class="form-label">Título</label>
+                                <input type="text" class="form-control" id="classTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="classDate" class="form-label">Data</label>
+                                <input type="date" class="form-control" id="classDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="classTime" class="form-label">Hora</label>
+                                <input type="time" class="form-control" id="classTime" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="saveClass()">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Students Modal -->
+        <div class="modal fade" id="topStudentsModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Alunos Mais Assíduos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="topStudentsContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja excluir esta aula?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notificação</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+
+        <div class="footer animate__animated animate__fadeIn">
+            Versão v1.0 | Desenvolvido por Victor Silva | <a href="https://wa.me/5562999486145"  style="color: var(--secondary-color);">Contato</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentClassId = null;
+        const classModal = new bootstrap.Modal(document.getElementById('classModal'));
+        const topStudentsModal = new bootstrap.Modal(document.getElementById('topStudentsModal'));
+        const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        const toast = new bootstrap.Toast(document.querySelector('.toast'));
+        const baseUrl = 'https://chamada.sua_empresa.com.br/api';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loginForm').addEventListener('submit', login);
+        });
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'sua_empresa' && password === 'sucesso123') {
+                document.getElementById('loginContainer').classList.add('animate__fadeOut');
+                setTimeout(() => {
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminPanel').classList.add('animate__fadeIn');
+                    initializeAdminPanel();
+                }, 500);
+            } else {
+                showToast('Usuário ou senha incorretos.');
+            }
+        }
+
+        function initializeAdminPanel() {
+            loadDashboardData();
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    showSection(targetId);
+                });
+            });
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            }
+        }
+
+        function showLoading() {
+            document.querySelector('.loading').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.querySelector('.loading').style.display = 'none';
+        }
+
+        function showToast(message) {
+            document.querySelector('.toast-body').textContent = message;
+            toast.show();
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.main-content > div').forEach(div => {
+                div.style.display = 'none';
+            });
+            const targetSection = document.getElementById(sectionId);
+            targetSection.style.display = 'block';
+            targetSection.classList.add('animate__fadeIn');
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.nav-link[href="#${sectionId}"]`).classList.add('active');
+
+            switch(sectionId) {
+                case 'classes':
+                    loadClasses();
+                    break;
+                case 'comments':
+                    loadComments();
+                    break;
+            }
+        }
+
+        function loadDashboardData() {
+            showLoading();
+            Promise.all([
+                fetch(`${baseUrl}/aulas`).then(response => response.json()),
+                fetch(`${baseUrl}/alunos-assiduos?all=true`).then(response => response.json()),
+                fetch(`${baseUrl}/aulas/hoje`).then(response => response.json())
+            ])
+            .then(([classes, students, todayClass]) => {
+                document.getElementById('totalClasses').textContent = classes.length;
+                document.getElementById('totalStudents').textContent = students.length;
+                document.getElementById('todayClass').textContent = todayClass.length > 0 ? todayClass[0].title : 'Nenhuma aula hoje';
+            })
+            .catch(error => console.error('Error loading dashboard data:', error))
+            .finally(() => hideLoading());
+        }
+
+        function loadClasses() {
+            showLoading();
+            fetch(`${baseUrl}/aulas`)
+                .then(response => response.json())
+                .then(classes => {
+                    const tableBody = document.getElementById('classesTableBody');
+                    tableBody.innerHTML = '';
+                    classes.forEach(cls => {
+                        const row = `<tr class="animate__animated animate__fadeIn">
+                            <td>${cls.id}</td>
+                            <td>${cls.title}</td>
+                            <td>${cls.date}</td>
+                            <td>${cls.time}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="showDeleteConfirmModal(${cls.id})">Excluir</button>
+                                <button class="btn btn-sm btn-secondary" onclick="exportAttendanceForClass(${cls.id})">Exportar Presenças</button>
+                            </td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => console.error('Error loading classes:', error))
+                .finally(() => hideLoading());
+        }
+
+        function showAddClassModal(id = null) {
+            currentClassId = id;
+            document.getElementById('classModalTitle').textContent = id ? 'Editar Aula' : 'Adicionar Aula';
+            document.getElementById('classForm').reset();
+            document.getElementById('classId').disabled = id !== null;
+
+            if (id) {
+                showLoading();
+                fetch(`${baseUrl}/aulas/${id}`)
+                    .then(response => response.json())
+                    .then(cls => {
+                        document.getElementById('classId').value = cls.id;
+                        document.getElementById('classTitle').value = cls.title;
+                        document.getElementById('classDate').value = cls.date;
+                        document.getElementById('classTime').value = cls.time;
+                    })
+                    .catch(error => console.error('Error loading class details:', error))
+                    .finally(() => hideLoading());
+            }
+
+            classModal.show();
+        }
+
+        function saveClass() {
+            showLoading();
+            const id = document.getElementById('classId').value;
+            const title = document.getElementById('classTitle').value;
+            const date = document.getElementById('classDate').value;
+            const time = document.getElementById('classTime').value;
+
+            const method = currentClassId ? 'PUT' : 'POST';
+            const url = currentClassId 
+                ? `${baseUrl}/aulas/${currentClassId}`
+                : `${baseUrl}/aulas`;
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: parseInt(id), title, date, time }),
+            })
+            .then(response => response.json())
+            .then(() => {
+                classModal.hide();
+                loadClasses();
+                showToast(currentClassId ? 'Aula atualizada com sucesso!' : 'Aula adicionada com sucesso!');
+            })
+            .catch(error => {
+                console.error('Error saving class:', error);
+                showToast('Erro ao salvar a aula. Por favor, tente novamente.');
+            })
+            .finally(() => hideLoading());
+        }
+
+        function showDeleteConfirmModal(id) {
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            confirmDeleteBtn.onclick = () => deleteClass(id);
+            deleteConfirmModal.show();
+        }
+
+        function deleteClass(id) {
+            showLoading();
+            fetch(`${baseUrl}/aulas/${id}`, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                deleteConfirmModal.hide();
+                loadClasses();
+                showToast('Aula excluída com sucesso!');
+            })
+            .catch(error => {
+                console.error('Error deleting class:', error);
+                showToast('Erro ao excluir a aula. Por favor, tente novamente.');
+            })
+            .finally(() => hideLoading());
+        }
+
+        function exportAllStudents() {
+            showLoading();
+            fetch(`${baseUrl}/alunos/csv`)
+                .then(response => response.json())
+                .then(data => {
+                    window.open(baseUrl.replace('/api', '') + data.link, '_blank');
+                })
+                .catch(error => {
+                    console.error('Error exporting students:', error);
+                    showToast('Erro ao exportar alunos.');
+                })
+                .finally(() => hideLoading());
+        }
+
+        function exportAttendanceForClass(classId) {
+            showLoading();
+            fetch(`${baseUrl}/alunos/csv/${classId}`)
+                .then(response => response.json())
+                .then(data => {
+                    window.open(baseUrl.replace('/api', '') + data.link, '_blank');
+                })
+                .catch(error => {
+                    console.error('Error exporting attendance:', error);
+                    showToast('Erro ao exportar presenças.');
+                })
+                .finally(() => hideLoading());
+        }
+
+        function exportAllAttendance() {
+            showLoading();
+            fetch(`${baseUrl}/alunos/csv`)
+                .then(response => response.json())
+                .then(data => {
+                    window.open(baseUrl.replace('/api', '') + data.link, '_blank');
+                })
+                .catch(error => {
+                    console.error('Error exporting all attendance:', error);
+                    showToast('Erro ao exportar todas as presenças.');
+                })
+                .finally(() => hideLoading());
+        }
+
+        function showTopStudents() {
+            showLoading();
+            fetch(`${baseUrl}/alunos-assiduos?all=true`)
+                .then(response => response.json())
+                .then(students => {
+                    const topStudentsContent = document.getElementById('topStudentsContent');
+                    if (students.length === 0) {
+                        topStudentsContent.innerHTML = '<p>Sem dados no momento.</p>';
+                    } else {
+                        const studentsList = students.slice(0, 10).map(student => 
+                            `<li class="animate__animated animate__fadeIn">${student.student_name || 'Nome não disponível'} - ${student.attendance_count || 0} presenças</li>`
+                        ).join('');
+                        topStudentsContent.innerHTML = `<ol>${studentsList}</ol>`;
+                    }
+                    topStudentsModal.show();
+                })
+                .catch(error => {
+                    console.error('Error loading top students:', error);
+                    showToast('Erro ao carregar os alunos mais assíduos.');
+                })
+                .finally(() => hideLoading());
+        }
+
+function loadComments() {
+    showLoading();
+    fetch('https://n8n.sua_empresa.com.br/webhook/comentarios', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Dados recebidos:', data);
+        const commentsContent = document.getElementById('commentsContent');
+        
+        if (!Array.isArray(data) || data.length === 0) {
+            commentsContent.innerHTML = '<p>Nenhum comentário disponível.</p>';
+            return;
+        }
+
+        let commentsByClass = {};
+        data.forEach(comment => {
+            if (!commentsByClass[comment.class_id]) {
+                commentsByClass[comment.class_id] = {
+                    title: comment.class_title,
+                    comments: [],
+                    totalRating: 0
+                };
+            }
+            commentsByClass[comment.class_id].comments.push(comment);
+            commentsByClass[comment.class_id].totalRating += parseInt(comment.rating) || 0;
+        });
+
+        let commentsHtml = '';
+        for (let classId in commentsByClass) {
+            const classData = commentsByClass[classId];
+            const averageRating = classData.totalRating / classData.comments.length;
+            commentsHtml += `
+                <div class="card mb-4 animate__animated animate__fadeIn">
+                    <div class="card-header">
+                        <h3>${classData.title} (Aula ${classId})</h3>
+                        <p>Média de avaliação: ${averageRating.toFixed(1)} <span class="star-rating">${'★'.repeat(Math.round(averageRating))}</span></p>
+                    </div>
+                    <div class="card-body">
+                        ${classData.comments.map(comment => `
+                            <div class="comment animate__animated animate__fadeIn">
+                                <p><i class="fas fa-user"></i> ${comment.student_name}</p>
+                                <p><span class="star-rating">${'★'.repeat(parseInt(comment.rating) || 0)}</span></p>
+                                <p>${comment.comment}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        commentsContent.innerHTML = commentsHtml;
+        console.log('HTML gerado:', commentsHtml);
+    })
+    .catch(error => {
+        console.error('Error loading comments:', error);
+        showToast('Erro ao carregar os comentários. Por favor, tente novamente.');
+        document.getElementById('commentsContent').innerHTML = '<p>Erro ao carregar os comentários. Por favor, tente novamente.</p>';
+    })
+    .finally(() => hideLoading());
+}
+
+    </script>
+</body>
+</html>
