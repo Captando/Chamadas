@@ -32,9 +32,9 @@ Este é um sistema whitelabel desenvolvido para gerenciar aulas, registros de pr
 
 Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 
-PORT=3000 SUPABASE_URL=<sua-url-do-supabase> 
-SUPABASE_KEY=<sua-chave-do-supabase> 
-WEBHOOK_URL=<sua-url-do-webhook>
+- PORT=3000 SUPABASE_URL=<sua-url-do-supabase>
+- SUPABASE_KEY=<sua-chave-do-supabase> 
+- WEBHOOK_URL=<sua-url-do-webhook>
 
 
 ### Instalação
